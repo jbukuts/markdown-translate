@@ -1,0 +1,32 @@
+{
+  "name": "markdown-translate",
+  "version": "1.0.0",
+  "description": "Translate Markdown files",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "translate",
+    "deepl",
+    "js"
+  ],
+  "author": "Jake Bukuts",
+  "license": "ISC",
+  "dependencies": {
+    "deepl-node": "^1.9.0",
+    "rehype-document": "^6.1.0",
+    "rehype-format": "^4.0.1",
+    "rehype-parse": "^8.0.4",
+    "rehype-remark": "^9.1.2",
+    "rehype-stringify": "^9.0.3",
+    "remark-gfm": "^3.0.1",
+    "remark-html": "^15.0.2",
+    "remark-parse": "^10.0.2",
+    "remark-rehype": "^10.1.0",
+    "remark-stringify": "^10.0.3",
+    "unified": "^10.1.2"
+  }
+}
