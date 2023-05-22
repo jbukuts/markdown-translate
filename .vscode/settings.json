@@ -1,0 +1,20 @@
+{
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "files.autoSave": "onFocusChange",
+    "javascript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
+    "files.insertFinalNewline": true,
+    "eslint.enable": true,
+    "eslint.validate": [
+      "javascript",
+      "typescript"
+    ],
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "[javascript]": {
+      "editor.formatOnSave": false
+    }
+  }
