@@ -9,6 +9,8 @@ These services allow for the upload and translation of HTML documents already. T
 
 As a quick note if MDX syntax is being used the translation to HTML will cause custom components to be removed.
 
+Also recommend excuting the script using at least Node v18.0.0
+
 ## Example usage
 
 ```bash
