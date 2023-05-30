@@ -11,6 +11,24 @@ As a quick note if MDX syntax is being used the translation to HTML will cause c
 
 Also recommend excuting the script using at least Node v18.0.0
 
+## Getting started
+
+First start by cloning the repo to your machine.
+
+Then install dependencies via:
+
+```bash
+npm ci
+```
+
+Then run:
+
+```bash
+./index.js
+```
+
+You should see a help message telling you the needed arguments.
+
 ## Example usage
 
 ```bash
