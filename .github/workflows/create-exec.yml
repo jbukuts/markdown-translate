@@ -38,7 +38,7 @@ jobs:
 
       - name: Create Release
         run: |
-          VERSION=$(cat package.json | jq -r '.version') \
-          echo $VERSION \
-          tar -zcvf dist.tar.gz ./dist \
-          gh release create $VERSION ./dist.tar.gz \
+          VERSION=$(cat package.json | jq -r '.version')
+          echo $VERSION
+          tar -zcvf dist.tar.gz ./dist
+          gh release create $VERSION ./dist.tar.gz
