@@ -1,2 +1,11 @@
 node_modules/
 .DS_Store
+
+# transpiled
+output/
+
+# compiled
+index
+index.exe
+index-*
+dist/
