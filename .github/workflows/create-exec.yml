@@ -42,3 +42,5 @@ jobs:
           echo $VERSION
           tar -zcvf dist.tar.gz ./dist
           gh release create $VERSION ./dist.tar.gz
+        env:
+          GH_TOKEN: ${{ github.token }}
