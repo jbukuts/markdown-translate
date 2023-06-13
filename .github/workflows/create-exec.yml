@@ -30,9 +30,13 @@ jobs:
       - name: Install Dependencies
         run: npm ci
         
-      # needed for codesign of macOS execs
+      # needed for codesign of macOS execs to not be killed by kernel
       - name: Install ldid
-        run: sudo apt-get install -y ldid
+        run: |
+          git clone https://github.com/ProcursusTeam/ldid.git
+          cd ldid
+          make install
+          cd ..
 
       - name: Transpile
         run: npm run transpile
