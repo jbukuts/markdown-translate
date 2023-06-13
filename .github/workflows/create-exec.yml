@@ -47,6 +47,6 @@ jobs:
           VERSION=$(cat package.json | jq -r '.version')
           echo $VERSION
           tar -zcvf dist.tar.gz ./dist
-          gh release create $VERSION ./dist.tar.gz
+          gh release create $VERSION ./dist.tar.gz --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}
