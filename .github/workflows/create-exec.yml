@@ -32,11 +32,9 @@ jobs:
         
       # needed for codesign of macOS execs to not be killed by kernel
       - name: Install ldid
-        run: |
-          git clone https://github.com/ProcursusTeam/ldid.git
-          cd ldid
-          make install
-          cd ..
+        uses: MOZGIII/install-ldid-action@v1
+        with:
+          tag: v2.1.5-procursus7
 
       - name: Transpile
         run: npm run transpile
