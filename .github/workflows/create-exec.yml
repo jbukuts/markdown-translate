@@ -32,6 +32,8 @@ jobs:
 
       - name: Install ldid
         uses: MOZGIII/install-ldid-action@v1
+        with:
+          tag: v2.1.5-procursus7
 
       - name: Install Dependencies
         run: npm ci
