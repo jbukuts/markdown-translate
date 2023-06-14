@@ -27,14 +27,20 @@ jobs:
           node-version: 18
           cache: 'npm'
 
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2.2.0
+
+      - name: Install ldid
+        uses: MOZGIII/install-ldid-action@v1
+
       - name: Install Dependencies
         run: npm ci
-        
+
       - name: Transpile
         run: npm run transpile
 
       - name: Compile
-        run: npm run build
+        run: npm run compile
 
       - name: Create Release
         run: |

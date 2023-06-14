@@ -9,8 +9,8 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "transpile": "rollup index.js --config ./rollup.config.js",
-    "build": "pkg output/index.js -t latest-linux-x64,latest-win-x64,latest-macos-x64,latest-macos-arm64 --out-path ./dist",
-    "compile": "npm run transpile && npm run build"
+    "compile": "pkg output/index.js -t latest-linux-x64,latest-win-x64,latest-macos-x64,latest-macos-arm64 --out-path ./dist",
+    "build": "npm run transpile && npm run build"
   },
   "keywords": [
     "translate",
