@@ -25,6 +25,7 @@ const config = {
   },
   transformIgnorePatterns: ['<rootDir>/node_modules/(?!node-fetch)/.*'],
   verbose: true,
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   coverageThreshold: {
     global: {
       statements: 100,
