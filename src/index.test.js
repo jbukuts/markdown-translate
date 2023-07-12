@@ -33,4 +33,31 @@ describe('createTranslatedDocument', () => {
 
     expect(write).toHaveBeenCalled();
   });
+
+  test('can translate document without verbose', async () => {
+    // mock APIs
+    translateDocDeepL.mockImplementation(() => '<h1>Test</h1>');
+    translateIBM.mockImplementation(() => {
+      throw new Error('test error');
+    });
+
+    const write = jest.fn();
+
+    // mock file IO
+    parse.mockReturnValue({ name: 'test file' });
+    readFileSync.mockReturnValue('# Test Header');
+    writeFileSync.mockImplementation(write);
+
+    await createTranslatedDocument({
+      filePath: './',
+      verbose: false,
+      startLang: 'en',
+      targetLang: 'es',
+      apiService: 'ibm',
+      apiKey: '',
+      apiURL: ''
+    });
+
+    expect(write).not.toHaveBeenCalled();
+  });
 });

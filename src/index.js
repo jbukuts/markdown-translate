@@ -16,22 +16,32 @@ import matter from 'gray-matter';
 import path from 'path';
 import remarkMdx from 'remark-mdx';
 import { translateDocDeepL, translateIBM } from './translate/index.js';
+import defaults from '../defaults.js';
 
 const serviceMap = {
   deepl: translateDocDeepL,
   ibm: translateIBM
 };
 
-// eslint-disable-next-line no-unused-vars
+/**
+ * Translates Markdown content to another language.
+ * @param {Object} options - options for translating the Markdown content.
+ * @param {string} options.filePath - file path of Markdown content to translate.
+ * @param {boolean} [options.verbose=] - toggles verbose logging.
+ * @param {string} [options.sourceLang=] - source language of content.
+ * @param {string} [options.targetLang=] - target language to translate to.
+ * @param {string} [options.apiService=] - API service to use when translating content.
+ * @param {string} options.apiKey - API key used for selected service.
+ * @param {string} [options.apiURL=] - URL of instance of IBM Translator service. Only needed in that context.
+ * @returns {Promise<void>}
+ */
 const createTranslatedDocument = async (options) => {
-  const {
-    filePath,
-    startLang = 'en',
-    targetLang = 'es',
-    apiService = 'ibm',
-    apiKey,
-    apiURL
-  } = options;
+  const { filePath, sourceLang, targetLang, apiService, apiKey, apiURL } = {
+    apiService: defaults.apiService,
+    sourceLang: defaults.sourceLang,
+    targetLang: defaults.targetLang,
+    ...options
+  };
 
   const { name } = path.parse(filePath);
 
@@ -63,7 +73,7 @@ const createTranslatedDocument = async (options) => {
     const responseDoc = await translateDocument(htmlString, {
       apiURL,
       apiKey,
-      startLang,
+      sourceLang,
       targetLang,
       fileName: name
     });

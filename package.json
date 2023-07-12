@@ -1,16 +1,16 @@
 {
   "name": "markdown-translate",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Translate Markdown files",
   "main": "src/index.js",
   "bin": "bin.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
     "test": "jest",
     "transpile": "rollup bin.js --config ./rollup.config.js",
-    "compile": "pkg output/bin.js -t latest-linux-x64,latest-win-x64,latest-macos-x64,latest-macos-arm64 --out-path ./dist -C GZip",
-    "build": "npm run transpile && npm run compile"
+    "compile": "pkg output/bin.js -t latest-linux-x64,latest-win-x64,latest-macos-x64 --out-path ./dist -C GZip",
+    "build": "npm run transpile && npm run compile",
+    "clean": "rm -r output, dist"
   },
   "keywords": [
     "translate",

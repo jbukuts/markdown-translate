@@ -15,15 +15,24 @@ const config = {
     '/coverage/',
     '/babel.config.cjs',
     '/rollup.config.js',
-    '/jest.config.js'
+    '/jest.config.js',
+    './bin.js'
   ],
   reporters: ['default'],
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '/dist/', '/output/'],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '/dist/', '/output/', './bin.js'],
   transform: {
     '^.+\\.js$': ['babel-jest']
   },
   transformIgnorePatterns: ['<rootDir>/node_modules/(?!node-fetch)/.*'],
-  verbose: false
+  verbose: true,
+  coverageThreshold: {
+    global: {
+      statements: 100,
+      branches: 100,
+      functions: 100,
+      lines: 100
+    }
+  }
 };
 
 export default config;

@@ -6,6 +6,13 @@ import { translateDocument } from './deepl';
 jest.mock('deepl-node');
 jest.mock('node-fetch');
 
+const mockOptions = {
+  apiKey: 'test_key',
+  sourceLang: 'en',
+  targetLang: 'es',
+  fileName: 'test.md'
+};
+
 describe('DeepL API', () => {
   test('Can return string successfully', async () => {
     const testText = 'test';
@@ -24,7 +31,7 @@ describe('DeepL API', () => {
       )
     );
 
-    const test = await translateDocument('<h1>test</h1>', 'apikey');
+    const test = await translateDocument('<h1>test</h1>', mockOptions);
     expect(test).toBe(testText);
   });
 
@@ -34,7 +41,7 @@ describe('DeepL API', () => {
       isDocumentTranslationComplete: jest.fn().mockReturnValue({ status: { status: 'error' } })
     }));
 
-    const test = await translateDocument('<h1>test</h1>', 'apikey');
+    const test = await translateDocument('<h1>test</h1>', mockOptions);
 
     expect(test).toBe(null);
   });

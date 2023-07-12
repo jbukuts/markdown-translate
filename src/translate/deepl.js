@@ -3,9 +3,17 @@ import * as deepl from 'deepl-node';
 import { Blob } from 'buffer';
 import fetch from 'node-fetch';
 
-// translates html documents
+/**
+ * Translates HTML document using DeepL API.
+ * @param {string} htmlString - represents HTML document to be translated.
+ * @param {Object} options - options for translating the HTML document.
+ * @param {string} options.apiKey - API key used for DeepL API.
+ * @param {string} options.sourceLang - source language of content.
+ * @param {string} options.targetLang - target language to translate to.
+ * @param {string} options.fileName - file name of document.
+ */
 const translateDocument = async (htmlString, options) => {
-  const { apiKey, startLang, targetLang, fileName } = options;
+  const { apiKey, sourceLang, targetLang, fileName } = options;
 
   try {
     const translator = new deepl.Translator(apiKey);
@@ -16,9 +24,9 @@ const translateDocument = async (htmlString, options) => {
     );
 
     // translate via api
-    const documentHandle = await translator.uploadDocument(htmlBuffer, startLang, targetLang, {
+    const documentHandle = await translator.uploadDocument(htmlBuffer, sourceLang, targetLang, {
       formality: 'default',
-      filename: `${fileName}.${startLang}.html`
+      filename: `${fileName}.${sourceLang}.html`
     });
     const { status } = await translator.isDocumentTranslationComplete(documentHandle);
 

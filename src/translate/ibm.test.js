@@ -6,6 +6,13 @@ import { translateDocument } from './ibm';
 jest.mock('ibm-watson/language-translator/v3.js');
 jest.mock('node-fetch');
 
+const mockOptions = {
+  apiKey: 'test_key',
+  sourceLang: 'en',
+  targetLang: 'es',
+  fileName: 'test.md'
+};
+
 describe('IBM Translator API', () => {
   afterEach(() => {
     jest.useRealTimers();
@@ -36,7 +43,7 @@ describe('IBM Translator API', () => {
       )
     );
 
-    const test = translateDocument('<h1>test</h1>', { apiKey: 'test_key' });
+    const test = translateDocument('<h1>test</h1>', mockOptions);
 
     jest.runAllTimersAsync();
 
@@ -54,7 +61,7 @@ describe('IBM Translator API', () => {
       getDocumentStatus: jest.fn()
     }));
 
-    const test = await translateDocument('<h1>test</h1>', { apiKey: 'test_key' });
+    const test = await translateDocument('<h1>test</h1>', mockOptions);
 
     expect(test).toBe(null);
   });

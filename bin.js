@@ -4,11 +4,9 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import createTranslatedDocument from './src/index.js';
+import defaults from './defaults.js';
 
-const SUPPORTED_LANGS = ['en', 'es'];
-const DEF_SOURCE_LANG = 'en';
-const DEF_TARGET_LANG = 'es';
-const DEF_SERVICE = 'ibm';
+const { apiService, sourceLang, targetLang, supportedLangs, services } = defaults;
 
 yargs(hideBin(process.argv))
   .command(
@@ -23,8 +21,8 @@ yargs(hideBin(process.argv))
         })
         .option('api', {
           describe: 'API service to use for translating document',
-          choices: ['ibm', 'deepl'],
-          default: DEF_SERVICE
+          choices: services,
+          default: apiService
         })
         .option('key', {
           alias: 'k',
@@ -34,9 +32,9 @@ yargs(hideBin(process.argv))
         })
         .option('source', {
           alias: 's',
-          choices: SUPPORTED_LANGS,
+          choices: supportedLangs,
           describe: 'Source language of document',
-          default: DEF_SOURCE_LANG
+          default: sourceLang
         })
         .option('url', {
           alias: 'u',
@@ -45,9 +43,9 @@ yargs(hideBin(process.argv))
         })
         .option('target', {
           alias: 't',
-          choices: SUPPORTED_LANGS,
+          choices: supportedLangs,
           describe: 'Target language to translate document to',
-          default: DEF_TARGET_LANG
+          default: targetLang
         })
         .check(({ api, url }) => {
           if (api === 'ibm' && !url) throw new Error('Using ibm API requires url to be set');
@@ -60,7 +58,7 @@ yargs(hideBin(process.argv))
         filePath: filename,
         verbose,
         apiKey: key,
-        startLang: source,
+        sourceLang: source,
         targetLang: target,
         apiService: api,
         apiURL: url
