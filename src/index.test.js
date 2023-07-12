@@ -20,7 +20,7 @@ describe('createTranslatedDocument', () => {
       apiURL: ''
     });
 
-    expect(output).toBe('# Test Header');
+    expect(output).toBe('# Test Header\n');
   });
 
   test('can handle error during translation', async () => {
