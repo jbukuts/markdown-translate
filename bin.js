@@ -3,6 +3,8 @@
 /* eslint-disable import/extensions */
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import fs from 'fs';
+import path from 'path';
 import createTranslatedDocument from './src/index.js';
 import defaults from './defaults.js';
 
@@ -51,11 +53,17 @@ yargs(hideBin(process.argv))
           if (api === 'ibm' && !url) throw new Error('Using ibm API requires url to be set');
           return true;
         }),
-    (argv) => {
+    async (argv) => {
       const { filename, verbose, api, source, target, key, url } = argv;
 
-      createTranslatedDocument({
-        filePath: filename,
+      const { name } = path.parse(filename);
+
+      // read file as string
+      console.log('Reading file');
+      const markdownString = fs.readFileSync(filename, 'utf8');
+
+      const output = await createTranslatedDocument(markdownString, {
+        fileName: name,
         verbose,
         apiKey: key,
         sourceLang: source,
@@ -63,6 +71,11 @@ yargs(hideBin(process.argv))
         apiService: api,
         apiURL: url
       });
+
+      // write as translated file
+      const outputFile = `./${name}.${targetLang}.md`;
+      fs.writeFileSync(outputFile, output);
+      console.log(`Translated file written to: ${outputFile}`);
     }
   )
   .option('verbose', {
