@@ -1,6 +1,6 @@
 module.exports = {
   extends: ['airbnb', 'prettier'],
-  plugins: ['prettier'],
+  plugins: ['prettier', 'jest'],
   rules: {
     indent: ['error', 2],
     'prettier/prettier': [
@@ -26,6 +26,7 @@ module.exports = {
   },
   env: {
     browser: true,
-    node: true
+    node: true,
+    'jest/globals': true
   }
 };
