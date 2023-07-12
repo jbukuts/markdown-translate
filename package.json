@@ -2,15 +2,15 @@
   "name": "markdown-translate",
   "version": "1.0.2",
   "description": "Translate Markdown files",
-  "main": "index.js",
-  "bin": "index.js",
+  "main": "src/index.js",
+  "bin": "bin.js",
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "transpile": "rollup index.js --config ./rollup.config.js",
-    "compile": "pkg output/index.js -t latest-linux-x64,latest-win-x64,latest-macos-x64,latest-macos-arm64 --out-path ./dist -C GZip",
-    "build": "npm run transpile && npm run build"
+    "test": "jest",
+    "transpile": "rollup bin.js --config ./rollup.config.js",
+    "compile": "pkg output/bin.js -t latest-linux-x64,latest-win-x64,latest-macos-x64,latest-macos-arm64 --out-path ./dist -C GZip",
+    "build": "npm run transpile && npm run compile"
   },
   "keywords": [
     "translate",
@@ -40,15 +40,23 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.22.8",
+    "@babel/preset-env": "^7.22.7",
     "@rollup/plugin-commonjs": "^25.0.1",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.1.0",
+    "babel-jest": "^29.6.1",
     "eslint": "^8.41.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-jest": "^27.2.2",
     "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.6.1",
+    "jest-fetch-mock": "^3.0.3",
     "pkg": "^5.8.1",
     "prettier": "^2.8.8",
+    "rollup": "^3.26.2",
+    "rollup-jest": "^3.1.0",
     "rollup-plugin-polyfill-node": "^0.12.0"
   }
 }
