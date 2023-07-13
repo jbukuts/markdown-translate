@@ -23,8 +23,8 @@ runs:
       run: npm ci
       shell: bash
 
-      if: inputs.access-token != ''
     - name: NPM Login
+      if: ${{ inputs.access-token != '' }}
       run: |
         npm config set //registry.npmjs.org/:_authToken=${{ inputs.access-token }}
         npm whoami
