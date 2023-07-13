@@ -1,10 +1,14 @@
-name: 'Build Binaries'
+name: 'Setup'
 description: 'Build executables for script'
 inputs:
-  node_version:
-    description: 'Who to say Hi'
+  node-version:
+    description: 'Version of node to use'
     required: false
     default: 18
+  access-token:
+    description: 'NPM access token for login'
+    required: false
+    default: ''
 
 runs:
   using: 'composite'
@@ -18,3 +22,9 @@ runs:
     - name: Install Dependencies
       run: npm ci
       shell: bash
+
+      if: inputs.access-token != ''
+    - name: NPM Login
+      run: |
+        npm config set //registry.npmjs.org/:_authToken=${{ inputs.access-token }}
+        npm whoami

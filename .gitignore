@@ -4,6 +4,8 @@ node_modules/
 # transpiled
 output/
 
+test/
+
 # compiled
 index
 index.exe
