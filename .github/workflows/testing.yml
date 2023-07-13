@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup
-        uses: ./actions/setup.yml
+        uses: ./actions/setup-deps.yml
 
       - name: Unit Testing
         run: npm run test
@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup
-        uses: ./actions/setup.yml
+        uses: ./actions/setup-deps.yml
 
       - name: Dry Build
         uses: ./actions/build-binaries.yml
