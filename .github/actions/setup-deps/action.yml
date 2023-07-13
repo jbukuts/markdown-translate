@@ -28,3 +28,4 @@ runs:
       run: |
         npm config set //registry.npmjs.org/:_authToken=${{ inputs.access-token }}
         npm whoami
+      shell: bash
