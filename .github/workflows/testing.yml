@@ -22,14 +22,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci
+      - name: Setup
+        uses: ./actions/setup.yml
 
       - name: Unit Testing
         run: npm run test
@@ -41,17 +35,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
+      - name: Setup
+        uses: ./actions/setup.yml
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: Dry Build
+        uses: ./actions/build-binaries.yml
 
-      - name: Transpile
-        run: npm run transpile
-
-      - name: Compile
-        run: npm run compile
+      - name: List Files
+        run: cat ./dist
