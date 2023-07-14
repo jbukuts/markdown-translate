@@ -48,7 +48,7 @@ jobs:
         run: echo "new version $NEW_TAG"
 
       - name: NPM Version Bump
-        run: npm version ${{ steps.version-bump.outputs.newTag }}
+        run: npm version ${{ steps.version-bump.outputs.newTag }} --allow-same-version
 
       - name: See Config
         run: cat ./package.json
