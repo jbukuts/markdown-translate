@@ -46,6 +46,9 @@ jobs:
         env:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
         run: echo "new version $NEW_TAG"
+        
+      - name: See Changes
+        run: git status
 
       - name: NPM Version Bump
         run: npm version ${{ steps.version-bump.outputs.newTag }} --allow-same-version
