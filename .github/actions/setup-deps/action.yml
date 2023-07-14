@@ -30,7 +30,7 @@ runs:
 
     - name: NPM Login
       if: ${{ inputs.access-token != '' }}
-      run: |
-        npm config set //registry.npmjs.org/:_authToken=${{ inputs.access-token }}
-        npm whoami
+      run: npm whoami
       shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.access-token }}
