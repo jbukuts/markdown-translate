@@ -2,10 +2,10 @@ name: Create Release
 on:
   workflow_dispatch:
     inputs:
-        release-type:
-          type: choice
-          description: Type of release bump
-          options: 
+      release-type:
+        type: choice
+        description: Type of release bump
+        options:
           - major
           - minor
           - patch
@@ -21,7 +21,40 @@ defaults:
     shell: bash
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup-deps
+
+      - name: Testing
+        uses: ./.github/actions/testing
+
   build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup-deps
+
+      - name: Build Executables
+        uses: ./.github/actions/build-binaries
+
+      - name: Create Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: built-scripts
+          path: dist
+
+  deploy:
+    needs: [build, test]
     runs-on: ubuntu-latest
 
     steps:
@@ -29,7 +62,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.BOT_TOKEN }}
-        
+
       - name: Set User
         run: |
           git config user.name "GitHub Action Create Release"
@@ -40,11 +73,11 @@ jobs:
         with:
           access-token: ${{ secrets.NPM_ACCESS_TOKEN }}
 
-      - name: Testing
-        uses: ./.github/actions/testing
-
-      - name: Build Executables
-        uses: ./.github/actions/build-binaries
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: built-scripts
+          path: dist
 
       - name: NPM Version Bump
         id: version-bump
@@ -54,9 +87,6 @@ jobs:
 
       - name: See Version
         run: echo ${{ steps.version-bump.outputs.NEW_VERSION }}
-      
-      - name: See Config
-        run: cat ./package.json
 
       - name: Push Changes
         run: |
@@ -66,7 +96,7 @@ jobs:
       - name: Create GitHub Release
         run: |
           tar -zcvf dist.tar.gz ./dist
-          gh release create ${{ steps.version-bump.outputs.NEW_VERSION }} ./dist.tar.gz --generate-notes --target
+          gh release create ${{ steps.version-bump.outputs.NEW_VERSION }} ./dist.tar.gz --generate-notes --target main
         env:
           GH_TOKEN: ${{ github.token }}
 
