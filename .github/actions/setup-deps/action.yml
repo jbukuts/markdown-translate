@@ -9,6 +9,10 @@ inputs:
     description: 'NPM access token for login'
     required: false
     default: ''
+  registry-url:
+    description: 'Registry URL to use'
+    required: false
+    default: 'https://registry.npmjs.org'
 
 runs:
   using: 'composite'
@@ -16,7 +20,8 @@ runs:
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ inputs.node_version }}
+        node-version: ${{ inputs.node-version }}
+        registry-url: ${{ inputs.registry-url }}
         cache: 'npm'
 
     - name: Install Dependencies

@@ -15,7 +15,7 @@ defaults:
     shell: bash
 
 jobs:
-  unit-tests:
+  testing:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,18 +25,15 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup-deps
 
-      - name: Unit Testing
-        run: npm run test
+      - name: Testing
+        uses: ./.github/actions/testing
 
-  build-binaries:
+  dry-build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Directory
-        run: pwd
 
       - name: Setup
         uses: ./.github/actions/setup-deps

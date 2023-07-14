@@ -2,7 +2,7 @@ name: Create Release
 on:
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# Sets permissions of the GITHUB_TOKEN
 permissions:
   contents: write
   pages: write
@@ -26,16 +26,33 @@ jobs:
         with:
           access-token: ${{ secrets.NPM_ACCESS_TOKEN }}
 
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@v2.2.0
+      - name: Testing
+        uses: ./.github/actions/testing
 
-      - name: Install ldid
-        uses: MOZGIII/install-ldid-action@v1
-        with:
-          tag: v2.1.5-procursus7
-
-      - name: Transpile and Compile
+      - name: Build Executables
         uses: ./.github/actions/build-binaries
+
+      - name: Version Bump
+        id: version-bump
+        uses: 'phips28/gh-action-bump-version@master'
+        with:
+          # skip-tag: 'true'
+          # skip-commit: 'true'
+          # skip-push: true
+          commit-message: 'version bump for new release'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: See Version
+        env:
+          NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
+        run: echo "new version $NEW_TAG"
+
+      - name: NPM Version
+        run: npm version ${{ steps.version-bump.outputs.newTag }}
+
+      - name: See Config
+        run: cat ./package.json
 
       - name: Create GitHub Release
         run: |

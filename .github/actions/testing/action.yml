@@ -1,0 +1,13 @@
+name: 'Testing'
+description: 'Run linting and unit tests'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Linting
+      run: npm run lint
+      shell: bash
+
+    - name: Unit Testing
+      run: npm run test
+      shell: bash

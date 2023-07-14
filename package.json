@@ -1,6 +1,6 @@
 {
   "name": "markdown-translate",
-  "version": "1.1.1",
+  "version": "1.1.0",
   "description": "Translate Markdown files",
   "main": "src/index.js",
   "files": [
@@ -15,10 +15,12 @@
   },
   "scripts": {
     "test": "jest",
-    "transpile": "rollup bin.js --config ./rollup.config.js",
-    "compile": "pkg output/bin.js -t latest-linux-x64,latest-win-x64,latest-macos-x64 --out-path ./dist -C GZip",
+    "lint": "cross-env ./node_modules/.bin/eslint .",
+    "transpile": "cross-env ./node_modules/.bin/rollup bin.js --config ./rollup.config.js",
+    "compile": "cross-env ./node_modules/.bin/pkg output/bin.js -t latest-linux-x64,latest-win-x64,latest-macos-x64 --out-path ./dist -C GZip",
     "build": "npm run transpile && npm run compile",
-    "pack:dry": "npm pack --dry-run"
+    "pack:dry": "npm pack --dry-run",
+    "publish:dry": "npm publish --dry-run"
   },
   "keywords": [
     "markdown",
@@ -55,6 +57,7 @@
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.1.0",
     "babel-jest": "^29.6.1",
+    "cross-env": "^7.0.3",
     "eslint": "^8.41.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.8.0",
