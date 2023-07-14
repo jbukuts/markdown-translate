@@ -15,43 +15,28 @@ defaults:
     shell: bash
 
 jobs:
-  unit-tests:
+  testing:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
+      - name: Setup
+        uses: ./.github/actions/setup-deps
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: Testing
+        uses: ./.github/actions/testing
 
-      - name: Unit Testing
-        run: npm run test
-
-  build-binaries:
+  dry-build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
+      - name: Setup
+        uses: ./.github/actions/setup-deps
 
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Transpile
-        run: npm run transpile
-
-      - name: Compile
-        run: npm run compile
+      - name: Dry Build
+        uses: ./.github/actions/build-binaries
