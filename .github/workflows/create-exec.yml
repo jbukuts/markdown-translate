@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
         
       - name: Set User
         run: |
@@ -48,7 +50,7 @@ jobs:
         id: version-bump
         run: |
           VERSION=$(npm version ${{ github.event.inputs.release-type }})
-          echo "NEW_VERSION={VERSION}" >> $GITHUB_OUTPUT
+          echo "NEW_VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: See Version
         run: echo ${{ steps.version-bump.outputs.NEW_VERSION }}
