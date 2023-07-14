@@ -102,3 +102,5 @@ jobs:
 
       - name: Publish Package
         run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
