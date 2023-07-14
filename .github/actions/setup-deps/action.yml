@@ -1,5 +1,5 @@
 name: 'Setup'
-description: 'Build executables for script'
+description: 'Setup NPM Environment'
 inputs:
   node-version:
     description: 'Version of node to use'

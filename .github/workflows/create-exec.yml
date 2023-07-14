@@ -23,6 +23,8 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup-deps
+        with:
+          access-token: ${{ secrets.NPM_ACCESS_TOKEN }}
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v2.2.0
@@ -35,7 +37,7 @@ jobs:
       - name: Transpile and Compile
         uses: ./.github/actions/build-binaries
 
-      - name: Create Release
+      - name: Create GitHub Release
         run: |
           VERSION=$(cat package.json | jq -r '.version')
           echo $VERSION
