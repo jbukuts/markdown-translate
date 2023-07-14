@@ -1,10 +1,10 @@
 /** @type {import('jest').Config} */
 const config = {
   rootDir: '.',
-  testEnvironment: 'node',
+  // testEnvironment: 'node',
   moduleDirectories: ['node_modules', '<rootDir>/translate'],
   moduleFileExtensions: ['js'],
-  // testMatch: ['<rootDir>/**/*(*.)test.js'],
+  testMatch: ['<rootDir>/**/*(*.)test.js'],
   collectCoverage: true,
   collectCoverageFrom: ['**/**.js'],
   coverageReporters: ['text-summary', 'html', 'lcov'],
@@ -25,7 +25,7 @@ const config = {
   },
   transformIgnorePatterns: ['<rootDir>/node_modules/(?!node-fetch)/.*'],
   verbose: true,
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/__tests__/jest.setup.js'],
   coverageThreshold: {
     global: {
       statements: 100,
