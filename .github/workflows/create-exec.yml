@@ -5,8 +5,7 @@ on:
 # Sets permissions of the GITHUB_TOKEN
 permissions:
   contents: write
-  pages: write
-  id-token: write
+  pull-requests: write
 
 # Default to bash
 defaults:
@@ -32,13 +31,13 @@ jobs:
       - name: Build Executables
         uses: ./.github/actions/build-binaries
 
-      - name: Version Bump
+      - name: Create New Version
         id: version-bump
         uses: 'phips28/gh-action-bump-version@master'
         with:
-          # skip-tag: 'true'
-          # skip-commit: 'true'
-          # skip-push: true
+          skip-tag: 'true'
+          skip-commit: 'true'
+          skip-push: true
           commit-message: 'version bump for new release'
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -48,15 +47,21 @@ jobs:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
         run: echo "new version $NEW_TAG"
 
+      - name: NPM Version Bump
+        run: npm version ${{ steps.version-bump.outputs.newTag }}
+
       - name: See Config
         run: cat ./package.json
 
+      - name: Push Changes
+        run: |
+          git status
+          git push -u origin
+
       - name: Create GitHub Release
         run: |
-          VERSION=$(cat package.json | jq -r '.version')
-          echo $VERSION
           tar -zcvf dist.tar.gz ./dist
-          gh release create $VERSION ./dist.tar.gz --generate-notes
+          gh release create ${{ steps.version-bump.outputs.newTag }} ./dist.tar.gz --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}
 
