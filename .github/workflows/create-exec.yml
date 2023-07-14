@@ -42,8 +42,12 @@ jobs:
       - name: NPM Version Bump
         id: version-bump
         run: |
-          echo '::set-output name=NEW_VERSION::$(npm version ${{ github.event.inputs.release-type }})'
+          VERSION=$(npm version ${{ github.event.inputs.release-type }})
+          echo "NEW_VERSION={VERSION}" >> $GITHUB_OUTPUT
 
+      - name: See Version
+        run: echo ${{ steps.version-bump.outputs.NEW_VERSION }}
+      
       - name: See Config
         run: cat ./package.json
 
