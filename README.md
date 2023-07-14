@@ -1,5 +1,15 @@
 # Markdown Translate CLI
 
+<p>
+    <a href="https://www.npmjs.com/package/markdown-translate">
+        <img src="https://img.shields.io/npm/v/markdown-translate">
+    </a>
+    <a href="https://github.com/jbukuts/markdown-translate/blob/main/LICENSE">
+        <img src="https://img.shields.io/npm/l/markdown-translate">
+    </a>
+</p>
+
+
 Simple CLI tool to translate Markdown files. Currently is capable to make use of:
 
 - IBM Language Translator Service
@@ -11,7 +21,21 @@ As a quick note if MDX syntax is being used the translation to HTML will cause c
 
 Also recommend executing the script using at least Node v18.0.0
 
-## Getting started
+## Installation
+
+If you like to use the CLI via installation through NPM simply run:
+
+```bash
+npm install -g markdown-translate
+```
+
+And that's it! You can start translating your documentation immediately like so:
+
+```bash
+markdown-translate ./test.md --api deepl --key $DEEPL_API_KEY
+```
+
+## Getting started locally
 
 First start by cloning the repo to your machine.
 
@@ -27,20 +51,12 @@ Then run:
 ./bin.js
 ```
 
-You should see a help message telling you the needed arguments.
+> If you can't execute the file immediately try making it executable via `chmod +x ./bin.js`
 
-## Example usage
-
-```bash
-./bin.js <filename> --key API_KEY --api deepl --source en --target es
-
-# or
-
-./bin.js <filename> --key API_KEY --url INSTANCE_URL
-```
+Once you've executable the script you should see a help message telling you the needed arguments.
 
 When not supplied the default `--api` option is `ibm` using the IBM Language Translator Service. This option also requires the `--url` which correlates to your instance's service URL available in your cloud account's resource list.
 
 The `--source` and `--target` options are both optional and will default to `en` and `es` respectively.
 
-Run `./index.js --help` to see all options.
+Run `./bin.js --help` to see all options.
