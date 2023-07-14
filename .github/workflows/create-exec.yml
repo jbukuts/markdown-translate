@@ -27,6 +27,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        
+      - name: Set User
+        run: |
+          git config user.name "GitHub Action Create Release"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Setup
         uses: ./.github/actions/setup-deps
