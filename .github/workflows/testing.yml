@@ -24,8 +24,6 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup-deps
-        with:
-          access-token: ${{ secrets.NPM_ACCESS_TOKEN }}
 
       - name: Testing
         uses: ./.github/actions/testing
