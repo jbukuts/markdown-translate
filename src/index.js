@@ -15,6 +15,8 @@ import matter from 'gray-matter';
 import remarkMdx from 'remark-mdx';
 import { translateDocDeepL, translateIBM } from './translate/index.js';
 import defaults from '../defaults.js';
+import rehypeTagElements from './plugins/rehypeTagElements.js';
+import rehypeReplaceTaggedItems from './plugins/rehypeReplaceTaggedItems.js';
 
 const serviceMap = {
   deepl: translateDocDeepL,
@@ -42,10 +44,14 @@ const createTranslatedDocument = async (markdownString, options) => {
     ...options
   };
 
+  const dontTranslate = ['code'];
+
   try {
     // pull frontmatter out
     console.log('Stripping frontmatter data from file');
     const { content: rawMarkdown, data: frontmatter } = matter(markdownString);
+
+    const mappedNodes = new Map();
 
     // transform to html string
     console.log('Transforming from Markdown to HTML');
@@ -57,6 +63,7 @@ const createTranslatedDocument = async (markdownString, options) => {
         .use(remarkRehype)
         .use(rehypeDocument)
         .use(rehypeFormat)
+        .use(rehypeTagElements, { map: mappedNodes, tags: dontTranslate })
         .use(rehypeStringify)
         .process(rawMarkdown)
     );
@@ -74,6 +81,7 @@ const createTranslatedDocument = async (markdownString, options) => {
     // convert html back to markdown
     const transMarkdownString = String(
       await unified()
+        .use(rehypeReplaceTaggedItems, { map: mappedNodes })
         .use(rehypeParse)
         .use(rehypeRemark)
         .use(remarkGfm)
@@ -81,6 +89,8 @@ const createTranslatedDocument = async (markdownString, options) => {
         .use(remarkStringify)
         .process(responseDoc)
     );
+
+    console.log('Translated document retrieved');
 
     return matter.stringify(transMarkdownString, frontmatter);
   } catch (error) {
