@@ -5,10 +5,46 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import fs from 'fs';
 import path from 'path';
-import createTranslatedDocument from './src/index.js';
+import { Worker } from 'worker_threads';
 import defaults from './defaults.js';
 
 const { apiService, sourceLang, targetLang, supportedLangs, services } = defaults;
+
+/**
+ * Return array of known path string for md files
+ * @param {string} pathString - initial unknown path string
+ */
+const determineFileArray = (pathString) => {
+  const isList = pathString.includes(',');
+
+  // if its a list ensure they all exists
+  if (isList) {
+    console.log(pathString);
+    const splitPaths = pathString.split(',').map((p) => p.trim());
+    const nonExistent = splitPaths.filter((p) => !fs.existsSync(p));
+    if (nonExistent.length > 0) throw new Error(`files ${nonExistent} do not exist!`);
+
+    return splitPaths;
+  }
+
+  // ensure file or folder exists
+  const exists = fs.existsSync(pathString);
+  if (!exists) throw new Error(`file ${pathString} does not exist!`);
+
+  // check if folder, if not return string
+  const isFolder = fs.lstatSync(pathString).isDirectory();
+  if (!isFolder) return [pathString];
+
+  // if folder traverse for all md files
+  const files = fs.readdirSync(pathString);
+
+  return files
+    .filter((f) => f.endsWith('.md'))
+    .map((f) => {
+      console.log(`-- Found ${f}`);
+      return path.join(pathString, f);
+    });
+};
 
 yargs(hideBin(process.argv))
   .command(
@@ -17,7 +53,7 @@ yargs(hideBin(process.argv))
     (yArgs) =>
       yArgs
         .positional('filename', {
-          describe: 'path to file to translate',
+          describe: 'path to file(s) of folder to translate',
           type: 'string',
           normalize: true
         })
@@ -49,33 +85,42 @@ yargs(hideBin(process.argv))
           describe: 'Target language to translate document to',
           default: targetLang
         })
-        .check(({ api, url }) => {
+        .check((argv) => {
+          const { api, url, filename } = argv;
           if (api === 'ibm' && !url) throw new Error('Using ibm API requires url to be set');
+
+          // eslint-disable-next-line no-param-reassign
+          argv.remappedFilenames = determineFileArray(filename);
+
           return true;
         }),
     async (argv) => {
-      const { filename, verbose, api, source, target, key, url } = argv;
+      const { verbose, api, source, target, key, url, remappedFilenames } = argv;
 
-      const { name } = path.parse(filename);
+      // await for all threads to resolve
+      await new Promise((resolve, reject) => {
+        let count = remappedFilenames.length;
 
-      // read file as string
-      console.log('Reading file');
-      const markdownString = fs.readFileSync(filename, 'utf8');
+        remappedFilenames.forEach((file) => {
+          // create worker and start thread
+          const worker = new Worker('./worker.js');
+          worker.postMessage({ filename: file, verbose, key, source, target, api, url });
 
-      const output = await createTranslatedDocument(markdownString, {
-        fileName: name,
-        verbose,
-        apiKey: key,
-        sourceLang: source,
-        targetLang: target,
-        apiService: api,
-        apiURL: url
+          // listen for end message
+          worker.on('message', (data) => {
+            if (data === null) reject(new Error('Error translating document'));
+
+            // we know were done
+            count -= 1;
+            if (count <= 0) {
+              console.log('Done translating documents!');
+              resolve();
+            }
+          });
+        });
       });
 
-      // write as translated file
-      const outputFile = `./${name}.${targetLang}.md`;
-      fs.writeFileSync(outputFile, output);
-      console.log(`Translated file written to: ${outputFile}`);
+      process.exit(0);
     }
   )
   .option('verbose', {
