@@ -17,6 +17,7 @@ import { translateDocDeepL, translateIBM } from './translate/index.js';
 import defaults from '../defaults.js';
 import rehypeTagElements from './plugins/rehypeTagElements.js';
 import rehypeReplaceTaggedItems from './plugins/rehypeReplaceTaggedItems.js';
+import remarkTagElements from './plugins/remarkTagElements.js';
 
 const serviceMap = {
   deepl: translateDocDeepL,
@@ -45,13 +46,15 @@ const createTranslatedDocument = async (markdownString, options) => {
   };
 
   const dontTranslate = ['code'];
+  const dontTranslateRemark = ['mdxJsxFlowElement'];
 
   try {
     // pull frontmatter out
     console.log('Stripping frontmatter data from file');
     const { content: rawMarkdown, data: frontmatter } = matter(markdownString);
 
-    const mappedNodes = new Map();
+    const mappedRemarkNodes = new Map();
+    const mappedRehypeNodes = new Map();
 
     // transform to html string
     console.log('Transforming from Markdown to HTML');
@@ -60,11 +63,22 @@ const createTranslatedDocument = async (markdownString, options) => {
         .use(remarkParse)
         .use(remarkGfm)
         .use(remarkMdx)
-        .use(remarkRehype)
+        .use(remarkTagElements, { map: mappedRemarkNodes, tags: dontTranslateRemark })
+        .use(remarkRehype, {
+          allowDangerousHtml: true,
+          passThrough: [
+            'html',
+            'mdxjsEsm',
+            'mdxFlowExpression',
+            'mdxJsxFlowElement',
+            'mdxJsxTextElement',
+            'mdxTextExpression'
+          ]
+        })
         .use(rehypeDocument)
         .use(rehypeFormat)
-        .use(rehypeTagElements, { map: mappedNodes, tags: dontTranslate })
-        .use(rehypeStringify)
+        .use(rehypeTagElements, { map: mappedRehypeNodes, tags: dontTranslate })
+        .use(rehypeStringify, { allowDangerousHtml: true })
         .process(rawMarkdown)
     );
 
@@ -81,9 +95,19 @@ const createTranslatedDocument = async (markdownString, options) => {
     // convert html back to markdown
     const transMarkdownString = String(
       await unified()
-        .use(rehypeReplaceTaggedItems, { map: mappedNodes })
+        .use(rehypeReplaceTaggedItems, { map: mappedRehypeNodes })
         .use(rehypeParse)
-        .use(rehypeRemark)
+        .use(rehypeRemark, {
+          handlers: {
+            'mdx-placeholder-element': (_h, node) => {
+              const {
+                properties: { dataTagId }
+              } = node;
+
+              return mappedRemarkNodes.get(dataTagId);
+            }
+          }
+        })
         .use(remarkGfm)
         .use(remarkMdx)
         .use(remarkStringify)
