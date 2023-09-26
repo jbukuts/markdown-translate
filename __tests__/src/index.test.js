@@ -7,8 +7,8 @@ jest.mock('../../src/translate/index');
 describe('createTranslatedDocument', () => {
   test('can translate document without verbose', async () => {
     // mock APIs
-    translateDocDeepL.mockImplementation(() => '<h1>Test Header</h1>');
-    translateIBM.mockImplementation(() => '<h1>Test Header</h1>');
+    translateDocDeepL.mockImplementation(() => '<h1>Test Header</h1>\n<mdx-placeholder-element/>');
+    translateIBM.mockImplementation(() => '<h1>Test Header</h1>\n<mdx-placeholder-element/>');
 
     const output = await createTranslatedDocument('# Test Header', {
       fileName: 'test',

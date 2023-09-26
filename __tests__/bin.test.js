@@ -7,7 +7,7 @@ const runCommand = async (...args) => {
 };
 
 describe('bin', () => {
-  test('test cli and ensure help occurs', async () => {
+  test('test cli and ensure help message prints', async () => {
     const output = await runCommand('--help');
 
     expect(output).toContain('bin.js <filename>');
