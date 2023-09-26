@@ -2,10 +2,10 @@
 
 <p>
     <a href="https://www.npmjs.com/package/markdown-translate">
-        <img src="https://img.shields.io/npm/v/markdown-translate">
+        <img src="https://img.shields.io/npm/v/markdown-translate"/>
     </a>
     <a href="https://github.com/jbukuts/markdown-translate/blob/main/LICENSE">
-        <img src="https://img.shields.io/npm/l/markdown-translate">
+        <img src="https://img.shields.io/npm/l/markdown-translate"/>
     </a>
 </p>
 
@@ -20,6 +20,12 @@ These services allow for the upload and translation of HTML documents already. T
 As a quick note if MDX syntax is being used the translation to HTML will cause custom components to be removed.
 
 Also recommend executing the script using at least Node v18.0.0
+
+## Features
+
+- Translates Markdown content keeping original formatting
+- Code blocks and inline code are not translated by default
+- Frontmatter values are translated
 
 ## Installation
 

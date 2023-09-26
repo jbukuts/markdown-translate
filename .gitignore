@@ -5,6 +5,7 @@ node_modules/
 output/
 
 test/
+test_files/
 
 # compiled
 index
