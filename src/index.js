@@ -67,12 +67,12 @@ const createTranslatedDocument = async (markdownString, options) => {
         .use(remarkRehype, {
           allowDangerousHtml: true,
           passThrough: [
-            'html',
-            'mdxjsEsm',
-            'mdxFlowExpression',
-            'mdxJsxFlowElement',
-            'mdxJsxTextElement',
-            'mdxTextExpression'
+            'html'
+            // 'mdxjsEsm',
+            // 'mdxFlowExpression',
+            // 'mdxJsxFlowElement',
+            // 'mdxJsxTextElement',
+            // 'mdxTextExpression'
           ]
         })
         .use(rehypeDocument)
