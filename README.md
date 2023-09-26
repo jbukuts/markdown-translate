@@ -17,9 +17,7 @@ Simple CLI tool to translate Markdown files. Currently is capable to make use of
 
 These services allow for the upload and translation of HTML documents already. This script simply transforms Markdown into HTML for upload. Then upon retrieval of the translated document, it is then transformed back into Markdown and saved as a new file.
 
-As a quick note if MDX syntax is being used the translation to HTML will cause custom components to be removed.
-
-Also recommend executing the script using at least Node v18.0.0
+It's also recommended to execute the script using at least Node v18.0.0 if running source code locally. 
 
 ## Features
 
@@ -55,6 +53,10 @@ Then run:
 
 ```bash
 ./bin.js
+
+# or
+
+node ./bin.js
 ```
 
 > If you can't execute the file immediately try making it executable via `chmod +x ./bin.js`
