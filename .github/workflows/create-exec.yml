@@ -82,7 +82,7 @@ jobs:
       - name: NPM Version Bump
         id: version-bump
         run: |
-          VERSION=$(npm version ${{ github.event.inputs.release-type }})
+          VERSION=$(npm version --force ${{ github.event.inputs.release-type }})
           echo "NEW_VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: See Version
