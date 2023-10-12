@@ -21,7 +21,7 @@ export default function remarkTrailingWhitespace() {
         return SKIP;
       }
 
-      // iterate over childnren of tag
+      // iterate over children of tag
       node.children.forEach((c) => {
         const { type, value } = c;
         const origValue = `${value}`;
@@ -46,7 +46,7 @@ export default function remarkTrailingWhitespace() {
             // and the previous doesn't end with a space
             const prev = parent.children[index - 1];
             if (prev && !prev.value.endsWith(' ')) {
-              parent.children.splice(index - 1, 0, { type: 'text', value: ' ' });
+              parent.children.splice(index, 0, { type: 'text', value: ' ' });
             }
           }
         }
