@@ -25,7 +25,7 @@ export default function remarkTagElements(options) {
         node.type = 'html';
         node.attributes = undefined;
         node.name = undefined;
-        node.value = `<mdx-placeholder-element data-tag-id="${id}"/>`;
+        node.value = `<mdx-placeholder-element data-tag-id="${id}"></mdx-placeholder-element>`;
 
         return CONTINUE;
       }
