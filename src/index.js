@@ -18,6 +18,7 @@ import defaults from '../defaults.js';
 import rehypeTagElements from './plugins/rehypeTagElements.js';
 import rehypeReplaceTaggedItems from './plugins/rehypeReplaceTaggedItems.js';
 import remarkTagElements from './plugins/remarkTagElements.js';
+import remarkTrailingWhitespace from './plugins/remarkTrailingWhitespace.js';
 
 const serviceMap = {
   deepl: translateDocDeepL,
@@ -110,6 +111,7 @@ const createTranslatedDocument = async (markdownString, options) => {
         })
         .use(remarkGfm)
         .use(remarkMdx)
+        .use(remarkTrailingWhitespace)
         .use(remarkStringify)
         .process(responseDoc)
     );
