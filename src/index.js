@@ -5,6 +5,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
+import rehypeRaw from 'rehype-raw';
 import rehypeDocument from 'rehype-document';
 import rehypeFormat from 'rehype-format';
 import rehypeParse from 'rehype-parse';
@@ -95,6 +96,8 @@ const createTranslatedDocument = async (markdownString, options) => {
     // convert html back to markdown
     const transMarkdownString = String(
       await unified()
+        .use(rehypeRaw)
+        .use(rehypeFormat)
         .use(rehypeReplaceTaggedItems, { map: mappedRehypeNodes })
         .use(rehypeParse)
         .use(rehypeRemark, {
