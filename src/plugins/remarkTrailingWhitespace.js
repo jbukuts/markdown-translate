@@ -11,8 +11,8 @@ const START_WHITESPACE = /^\s.*$/;
  * trimming them, and then modifying adjacent nodes as needed
  *
  * Referenced from:
- * - {@link https://github.com/orgs/syntax-tree/discussions/60#discussioncomment-2111096|Fix}
- * - {@link https://github.com/remarkjs/remark/issues/908|Issue}
+ * - {@link https://github.com/orgs/syntax-tree/discussions/60#discussioncomment-2111096 | Fix}
+ * - {@link https://github.com/remarkjs/remark/issues/908 | Issue}
  */
 export default function remarkTrailingWhitespace() {
   return function transformer(tree) {
