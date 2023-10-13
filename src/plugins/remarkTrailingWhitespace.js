@@ -34,7 +34,7 @@ export default function remarkTrailingWhitespace() {
 
           // and the next doesn't start with a period
           const next = parent.children[index + 1];
-          if (next && !next.value.startsWith('.')) {
+          if (next && !next.value.startsWith('.') && !next.value.startsWith(' ')) {
             next.value = ` ${next.value}`;
           }
         }
