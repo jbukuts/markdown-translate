@@ -19,7 +19,9 @@ import defaults from '../defaults.js';
 import rehypeTagElements from './plugins/rehypeTagElements.js';
 import rehypeReplaceTaggedItems from './plugins/rehypeReplaceTaggedItems.js';
 import remarkTagElements from './plugins/remarkTagElements.js';
+import themes from './themes.js';
 
+const { info } = themes;
 const serviceMap = {
   deepl: translateDocDeepL,
   ibm: translateIBM
@@ -51,14 +53,14 @@ const createTranslatedDocument = async (markdownString, options) => {
 
   try {
     // pull frontmatter out
-    console.log('Stripping frontmatter data from file');
+    console.log(info.bold(fileName), info('- stripping frontmatter data from file'));
     const { content: rawMarkdown, data: frontmatter } = matter(markdownString);
 
     const mappedRemarkNodes = new Map();
     const mappedRehypeNodes = new Map();
 
     // transform to html string
-    console.log('Transforming from Markdown to HTML');
+    console.log(info.bold(fileName), info('- transforming from Markdown to HTML'));
     const htmlString = String(
       await unified()
         .use(remarkParse)
@@ -67,14 +69,7 @@ const createTranslatedDocument = async (markdownString, options) => {
         .use(remarkTagElements, { map: mappedRemarkNodes, tags: dontTranslateRemark })
         .use(remarkRehype, {
           allowDangerousHtml: true,
-          passThrough: [
-            'html'
-            // 'mdxjsEsm',
-            // 'mdxFlowExpression',
-            // 'mdxJsxFlowElement',
-            // 'mdxJsxTextElement',
-            // 'mdxTextExpression'
-          ]
+          passThrough: ['html']
         })
         .use(rehypeDocument)
         .use(rehypeFormat)
@@ -84,6 +79,7 @@ const createTranslatedDocument = async (markdownString, options) => {
     );
 
     // use specified translation service
+    console.log(info.bold(fileName), info('- sending document off for translation'));
     const translateDocument = serviceMap[apiService];
     const responseDoc = await translateDocument(htmlString, {
       apiURL,
@@ -92,8 +88,10 @@ const createTranslatedDocument = async (markdownString, options) => {
       targetLang,
       fileName
     });
+    console.log(info.bold(fileName), info('- translated document retrieved'));
 
     // convert html back to markdown
+    console.log(info.bold(fileName), info('- transforming back to Markdown'));
     const transMarkdownString = String(
       await unified()
         .use(rehypeRaw)
@@ -102,7 +100,7 @@ const createTranslatedDocument = async (markdownString, options) => {
         .use(rehypeParse)
         .use(rehypeRemark, {
           handlers: {
-            'mdx-placeholder-element': (_h, node) => {
+            'mdx-placeholder-element': (_, node) => {
               const {
                 properties: { dataTagId }
               } = node;
@@ -117,8 +115,7 @@ const createTranslatedDocument = async (markdownString, options) => {
         .process(responseDoc)
     );
 
-    console.log('Translated document retrieved');
-
+    // reattach frontmatter data
     return matter.stringify(transMarkdownString, frontmatter);
   } catch (error) {
     console.error(`Error occurred during document translation: ${error}`);
