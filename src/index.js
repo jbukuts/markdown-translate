@@ -21,7 +21,7 @@ import rehypeReplaceTaggedItems from './plugins/rehypeReplaceTaggedItems.js';
 import remarkTagElements from './plugins/remarkTagElements.js';
 import themes from './themes.js';
 
-const { info } = themes;
+const { info, error } = themes;
 const serviceMap = {
   deepl: translateDocDeepL,
   ibm: translateIBM
@@ -78,6 +78,8 @@ const createTranslatedDocument = async (markdownString, options) => {
         .process(rawMarkdown)
     );
 
+    if (fileName === '102') throw new Error('Oh no!');
+
     // use specified translation service
     console.log(info.bold(fileName), info('- sending document off for translation'));
     const translateDocument = serviceMap[apiService];
@@ -117,8 +119,9 @@ const createTranslatedDocument = async (markdownString, options) => {
 
     // reattach frontmatter data
     return matter.stringify(transMarkdownString, frontmatter);
-  } catch (error) {
-    console.error(`Error occurred during document translation: ${error}`);
+  } catch (err) {
+    console.log(error(fileName), error('- error occurred during document translation'));
+    console.log(error(err));
     return null;
   }
 };
