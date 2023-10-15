@@ -5,8 +5,8 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import fs from 'fs';
 import path from 'path';
+import { Worker } from 'worker_threads';
 import defaults from './defaults.js';
-import createTranslatedDocument from './src/index.js';
 
 const { apiService, sourceLang, targetLang, supportedLangs, services } = defaults;
 
@@ -108,6 +108,11 @@ yargs(hideBin(process.argv))
           describe: 'Target language to translate document to',
           default: targetLang
         })
+        .option('verbose', {
+          alias: 'v',
+          type: 'boolean',
+          description: 'Run with verbose logging'
+        })
         .check((argv) => {
           const { api, url, filename } = argv;
           if (api === 'ibm' && !url) throw new Error('Using ibm API requires url to be set');
@@ -118,34 +123,47 @@ yargs(hideBin(process.argv))
           return true;
         }),
     async (argv) => {
-      const { verbose, api, source, target, key, url, remappedFilenames } = argv;
+      const { verbose, api, source, target, key, url, remappedFilenames, threads = 4 } = argv;
+
+      const maxWorkers = Math.min(remappedFilenames.length, threads);
+      const workers = [...new Array(maxWorkers)].map(() => new Worker('./src/worker.js'));
+
+      const startWorker = (worker, file, index) => {
+        worker.postMessage({
+          index,
+          filePath: file,
+          verbose,
+          apiKey: key,
+          sourceLang: source,
+          targetLang: target,
+          apiService: api,
+          apiURL: url
+        });
+      };
 
       await Promise.allSettled(
-        remappedFilenames.map(async (file) => {
-          const { name } = path.parse(file);
-          const markdownString = fs.readFileSync(file, 'utf8');
+        workers.map((worker, index) => {
+          startWorker(worker, remappedFilenames[index], index);
 
-          const output = await createTranslatedDocument(markdownString, {
-            fileName: name,
-            verbose,
-            apiKey: key,
-            sourceLang: source,
-            targetLang: target,
-            apiService: api,
-            apiURL: url
+          return new Promise((resolve, reject) => {
+            worker.on('message', (finishedData) => {
+              const { index: finishedIndex } = finishedData;
+
+              const nextIndex = finishedIndex + maxWorkers;
+              if (nextIndex >= remappedFilenames.length) {
+                worker.terminate();
+                return resolve();
+              }
+
+              return startWorker(worker, remappedFilenames[nextIndex], nextIndex);
+            });
+
+            worker.on('error', () => reject());
           });
-
-          const outputFile = `./${name}.${target}.md`;
-          fs.writeFileSync(outputFile, output);
         })
       );
 
       process.exit(0);
     }
   )
-  .option('verbose', {
-    alias: 'v',
-    type: 'boolean',
-    description: 'Run with verbose logging'
-  })
   .parse();
