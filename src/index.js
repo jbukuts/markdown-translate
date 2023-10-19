@@ -20,6 +20,8 @@ import rehypeTagElements from './plugins/rehypeTagElements.js';
 import rehypeReplaceTaggedItems from './plugins/rehypeReplaceTaggedItems.js';
 import remarkTagElements from './plugins/remarkTagElements.js';
 import themes from './themes.js';
+import remarkTrailingWhitespace from './plugins/remarkTrailingWhitespace.js';
+
 
 const { info, error } = themes;
 const serviceMap = {
@@ -111,6 +113,7 @@ const createTranslatedDocument = async (markdownString, options) => {
         })
         .use(remarkGfm)
         .use(remarkMdx)
+        .use(remarkTrailingWhitespace)
         .use(remarkStringify)
         .process(responseDoc)
     );
