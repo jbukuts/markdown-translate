@@ -22,7 +22,6 @@ import remarkTagElements from './plugins/remarkTagElements.js';
 import themes from './themes.js';
 import remarkTrailingWhitespace from './plugins/remarkTrailingWhitespace.js';
 
-
 const { info, error } = themes;
 const serviceMap = {
   deepl: translateDocDeepL,
