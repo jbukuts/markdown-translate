@@ -78,8 +78,6 @@ const createTranslatedDocument = async (markdownString, options) => {
         .process(rawMarkdown)
     );
 
-    if (fileName === '102') throw new Error('Oh no!');
-
     // use specified translation service
     console.log(info.bold(fileName), info('- sending document off for translation'));
     const translateDocument = serviceMap[apiService];
