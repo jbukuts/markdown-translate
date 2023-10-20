@@ -11,7 +11,7 @@
   "type": "module",
   "engines": {
     "npm": ">=8.0.0",
-    "node": ">=18.0.0"
+    "node": ">=18.13.0"
   },
   "scripts": {
     "postinstall": "chmod +x bin.js",
@@ -33,6 +33,7 @@
   ],
   "license": "ISC",
   "dependencies": {
+    "chalk": "^5.3.0",
     "deepl-node": "^1.9.0",
     "gray-matter": "^4.0.3",
     "ibm-watson": "^8.0.0",

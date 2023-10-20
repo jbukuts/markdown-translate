@@ -7,8 +7,12 @@ import fs from 'fs';
 import path from 'path';
 import defaults from './defaults.js';
 import createTranslatedDocument from './src/index.js';
+import themes from './src/themes.js';
 
+const { info, success, warning, head } = themes;
 const { apiService, sourceLang, targetLang, supportedLangs, services } = defaults;
+
+console.log(head('markdown-translate'));
 
 /**
  * Grab all file paths from a folder
@@ -23,7 +27,7 @@ const getFilesRecursively = (folderPath) => {
       const p = path.join(folderPath, f);
       const isFolder = fs.lstatSync(p).isDirectory();
       if (isFolder) return getFilesRecursively(p);
-      console.log(`-- Found ${p}`);
+      console.log(info(`-- Found ${p}`));
       return p;
     })
     .flat();
@@ -120,6 +124,11 @@ yargs(hideBin(process.argv))
     async (argv) => {
       const { verbose, api, source, target, key, url, remappedFilenames } = argv;
 
+      console.log(warning.bold('API:'), warning(api));
+      console.log(warning.bold('Source language:'), warning(source));
+      console.log(warning.bold('Target language:'), warning(target));
+      console.log(warning.bold('Total files to translate:'), warning(remappedFilenames.length));
+
       await Promise.allSettled(
         remappedFilenames.map(async (file) => {
           const { name } = path.parse(file);
@@ -135,11 +144,19 @@ yargs(hideBin(process.argv))
             apiURL: url
           });
 
+          console.log(success(`${name} - successfully translated`));
+
           const outputFile = `./${name}.${target}.md`;
+          console.log(
+            info.bold(name),
+            info('- writing translated file to'),
+            info.bold.underline(outputFile)
+          );
           fs.writeFileSync(outputFile, output);
         })
       );
 
+      console.log(success('Done!'));
       process.exit(0);
     }
   )
