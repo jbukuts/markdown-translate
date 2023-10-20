@@ -52,8 +52,6 @@ const translateDocument = async (htmlString, options) => {
     if (documentHandle.status !== 200)
       throw new Error(`There was an error uploading document ${documentHandle.status}`);
 
-    console.log('Successfully uploaded document!');
-
     // await translation
     const {
       result: { document_id: documentId }
