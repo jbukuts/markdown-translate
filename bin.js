@@ -9,7 +9,7 @@ import { Worker } from 'worker_threads';
 import defaults from './defaults.js';
 import themes from './src/themes.js';
 
-const { info, success, warning, head } = themes;
+const { info, success, warning, head, error } = themes;
 const { apiService, sourceLang, targetLang, supportedLangs, services } = defaults;
 
 console.log(head('markdown-translate'));
@@ -54,7 +54,7 @@ const determineFileArray = (pathString) => {
     // if its a list ensure they all exists
     const splitPaths = pathString.split(',').map((p) => p.trim());
     const nonExistent = splitPaths.filter((p) => !fs.existsSync(p));
-    if (nonExistent.length > 0) throw new Error(`files ${nonExistent} do not exist!`);
+    if (nonExistent.length > 0) throw new Error(`file(s) ${nonExistent} do not exist!`);
 
     // handle folders as part of list
     const allFilePaths = splitPaths.reduce((acc, curr) => {
@@ -132,10 +132,11 @@ yargs(hideBin(process.argv))
       const maxWorkers = Math.min(remappedFilenames.length, threads);
       const workers = [...new Array(maxWorkers)].map(() => new Worker('./src/worker.js'));
 
-      const startWorker = (worker, file, index) => {
+      const startWorker = (worker, index) => {
+        console.log(head.bold(remappedFilenames[index]), head('- beginning translation'));
         worker.postMessage({
           index,
-          filePath: file,
+          filePath: remappedFilenames[index],
           verbose,
           apiKey: key,
           sourceLang: source,
@@ -152,11 +153,18 @@ yargs(hideBin(process.argv))
 
       await Promise.allSettled(
         workers.map((worker, index) => {
-          startWorker(worker, remappedFilenames[index], index);
+          startWorker(worker, index);
 
           return new Promise((resolve, reject) => {
             worker.on('message', (finishedData) => {
-              const { index: finishedIndex } = finishedData;
+              const { index: finishedIndex, outputFile } = finishedData;
+              const name = remappedFilenames[index].split('/').slice(-1)[0];
+
+              console.log(
+                info.bold(name),
+                info('- writing translated file to'),
+                info.bold.underline(outputFile)
+              );
 
               const nextIndex = finishedIndex + maxWorkers;
               if (nextIndex >= remappedFilenames.length) {
@@ -164,10 +172,15 @@ yargs(hideBin(process.argv))
                 return resolve();
               }
 
-              return startWorker(worker, remappedFilenames[nextIndex], nextIndex);
+              return startWorker(worker, nextIndex);
             });
 
-            worker.on('error', () => reject());
+            worker.on('error', (err) => {
+              console.log(error(`There was an error translating`));
+              console.log(error(err));
+
+              return reject();
+            });
           });
         })
       );
