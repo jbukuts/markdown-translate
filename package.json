@@ -17,11 +17,12 @@
     "postinstall": "chmod +x bin.js",
     "test": "jest",
     "lint": "cross-env ./node_modules/.bin/eslint .",
-    "transpile": "cross-env ./node_modules/.bin/rollup bin.js --config ./rollup.config.js",
+    "transpile": "cross-env ./node_modules/.bin/rollup --config ./rollup.config.js",
     "compile": "cross-env ./node_modules/.bin/pkg output/bin.js -t latest-linux-x64,latest-win-x64,latest-macos-x64 --out-path ./dist -C GZip",
-    "build": "npm run transpile && npm run compile",
+    "build": "npm run clean && npm run transpile && npm run compile",
     "pack:dry": "npm pack --dry-run",
-    "publish:dry": "npm publish --dry-run"
+    "publish:dry": "npm publish --dry-run",
+    "clean": "./node_modules/.bin/rimraf dist output"
   },
   "keywords": [
     "markdown",
@@ -60,6 +61,7 @@
     "@rollup/plugin-commonjs": "^25.0.1",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-replace": "^5.0.5",
     "babel-jest": "^29.6.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.41.0",
@@ -73,6 +75,7 @@
     "npm-cli-login": "^1.0.0",
     "pkg": "^5.8.1",
     "prettier": "^2.8.8",
+    "rimraf": "^5.0.5",
     "rollup": "^3.26.2",
     "rollup-jest": "^3.1.0",
     "rollup-plugin-polyfill-node": "^0.12.0",
