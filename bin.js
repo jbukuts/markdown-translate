@@ -5,11 +5,11 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import fs from 'fs';
 import path from 'path';
+import { Worker } from 'worker_threads';
 import defaults from './defaults.js';
-import createTranslatedDocument from './src/index.js';
 import themes from './src/themes.js';
 
-const { info, success, warning, head } = themes;
+const { info, success, warning, head, error } = themes;
 const { apiService, sourceLang, targetLang, supportedLangs, services } = defaults;
 
 console.log(head('markdown-translate'));
@@ -54,7 +54,7 @@ const determineFileArray = (pathString) => {
     // if its a list ensure they all exists
     const splitPaths = pathString.split(',').map((p) => p.trim());
     const nonExistent = splitPaths.filter((p) => !fs.existsSync(p));
-    if (nonExistent.length > 0) throw new Error(`files ${nonExistent} do not exist!`);
+    if (nonExistent.length > 0) throw new Error(`file(s) ${nonExistent} do not exist!`);
 
     // handle folders as part of list
     const allFilePaths = splitPaths.reduce((acc, curr) => {
@@ -112,6 +112,11 @@ yargs(hideBin(process.argv))
           describe: 'Target language to translate document to',
           default: targetLang
         })
+        .option('verbose', {
+          alias: 'v',
+          type: 'boolean',
+          description: 'Run with verbose logging'
+        })
         .check((argv) => {
           const { api, url, filename } = argv;
           if (api === 'ibm' && !url) throw new Error('Using ibm API requires url to be set');
@@ -122,7 +127,24 @@ yargs(hideBin(process.argv))
           return true;
         }),
     async (argv) => {
-      const { verbose, api, source, target, key, url, remappedFilenames } = argv;
+      const { verbose, api, source, target, key, url, remappedFilenames, threads = 4 } = argv;
+
+      const maxWorkers = Math.min(remappedFilenames.length, threads);
+      const workers = [...new Array(maxWorkers)].map(() => new Worker('./src/worker.js'));
+
+      const startWorker = (worker, index) => {
+        console.log(head.bold(remappedFilenames[index]), head('- beginning translation'));
+        worker.postMessage({
+          index,
+          filePath: remappedFilenames[index],
+          verbose,
+          apiKey: key,
+          sourceLang: source,
+          targetLang: target,
+          apiService: api,
+          apiURL: url
+        });
+      };
 
       console.log(warning.bold('API:'), warning(api));
       console.log(warning.bold('Source language:'), warning(source));
@@ -130,29 +152,36 @@ yargs(hideBin(process.argv))
       console.log(warning.bold('Total files to translate:'), warning(remappedFilenames.length));
 
       await Promise.allSettled(
-        remappedFilenames.map(async (file) => {
-          const { name } = path.parse(file);
-          const markdownString = fs.readFileSync(file, 'utf8');
+        workers.map((worker, index) => {
+          startWorker(worker, index);
 
-          const output = await createTranslatedDocument(markdownString, {
-            fileName: name,
-            verbose,
-            apiKey: key,
-            sourceLang: source,
-            targetLang: target,
-            apiService: api,
-            apiURL: url
+          return new Promise((resolve, reject) => {
+            worker.on('message', (finishedData) => {
+              const { index: finishedIndex, outputFile } = finishedData;
+              const name = remappedFilenames[index].split('/').slice(-1)[0];
+
+              console.log(
+                info.bold(name),
+                info('- writing translated file to'),
+                info.bold.underline(outputFile)
+              );
+
+              const nextIndex = finishedIndex + maxWorkers;
+              if (nextIndex >= remappedFilenames.length) {
+                worker.terminate();
+                return resolve();
+              }
+
+              return startWorker(worker, nextIndex);
+            });
+
+            worker.on('error', (err) => {
+              console.log(error(`There was an error translating`));
+              console.log(error(err));
+
+              return reject();
+            });
           });
-
-          console.log(success(`${name} - successfully translated`));
-
-          const outputFile = `./${name}.${target}.md`;
-          console.log(
-            info.bold(name),
-            info('- writing translated file to'),
-            info.bold.underline(outputFile)
-          );
-          fs.writeFileSync(outputFile, output);
         })
       );
 
@@ -160,9 +189,4 @@ yargs(hideBin(process.argv))
       process.exit(0);
     }
   )
-  .option('verbose', {
-    alias: 'v',
-    type: 'boolean',
-    description: 'Run with verbose logging'
-  })
   .parse();
