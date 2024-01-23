@@ -1,6 +1,7 @@
 module.exports = {
   extends: ['airbnb', 'prettier'],
   plugins: ['prettier', 'jest'],
+  parserOptions: { ecmaVersion: 2020 },
   rules: {
     indent: ['error', 2],
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
