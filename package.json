@@ -1,6 +1,6 @@
 {
   "name": "markdown-translate",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Translate Markdown files",
   "main": "src/index.js",
   "files": [
