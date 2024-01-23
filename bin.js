@@ -130,7 +130,8 @@ yargs(hideBin(process.argv))
       const { verbose, api, source, target, key, url, remappedFilenames, threads = 4 } = argv;
 
       const maxWorkers = Math.min(remappedFilenames.length, threads);
-      const workers = [...new Array(maxWorkers)].map(() => new Worker('./src/worker.js'));
+      const workerURL = new URL('./src/worker.js', import.meta.url);
+      const workers = [...new Array(maxWorkers)].map(() => new Worker(workerURL));
 
       const startWorker = (worker, index) => {
         console.log(head.bold(remappedFilenames[index]), head('- beginning translation'));
